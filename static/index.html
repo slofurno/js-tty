@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title></title>
+<meta charset="utf-8" />
+<style>
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+input[type="text"]{
+  width:100%;
+  border-width: 0;
+  background-color: gainsboro;
+  padding:6px;
+  outline: none;
+}
+
+.history-line{
+  width:100%;
+  overflow-x: hidden;
+  white-space: pre;
+}
+</style>
+
+</head>
+<body>
+
+
+<div id = "console" style="width:600px; margin:0 auto;">
+  <div id = "history">
+  </div>
+  <div style="width:100%; background-color:gainsboro;">
+    <span id = "directory" style="float:left;"></span>
+    <div style="overflow:hidden;">
+      <input id="tty" type="text"></input>
+    </div>
+  </div>
+
+</div>
+
+
+
+just say no
+<script src = "httpclient.js"></script>
+<script src = "app.js"></script>
+</body>
+</html>
