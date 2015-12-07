@@ -201,9 +201,6 @@ wss.on('connection', function connection(ws) {
     console.log("tty closed", code, signal);
   });
 
-  child.stdin.write("source ./sigusr.sh\n");
-  console.log("spawned process");
-
   child.stdout.on('data', function (data) {
     ws.send(data.toString('utf8'));
   });
@@ -218,12 +215,7 @@ wss.on('connection', function connection(ws) {
   });
 
   ws.on('message', function incoming(message) {
-    if (message === "SIGINT"){
-      console.log("SIGINT rec");
-      child.kill('SIGUSR1');
-    }else{
       child.stdin.write(message + "\n");
-    }
   });
 
 });
