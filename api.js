@@ -192,6 +192,8 @@ var wss = new WebSocketServer({ server: server });
 wss.on('connection', function connection(ws) {
 
   var child = fork("sh");
+
+  child.stdin.write("source ./sigusr.sh\n");
   console.log("spawned process");
 
   child.on('error', function (err) {
@@ -207,7 +209,8 @@ wss.on('connection', function connection(ws) {
     ws.send(data.toString('utf8'));
   });
 
-  child.on('close', function (err) {
+  child.on('close', function (code, signal) {
+    console.log("tty closed", code, signal);
   });
 
   ws.on('close', function close() {
@@ -216,7 +219,12 @@ wss.on('connection', function connection(ws) {
   });
 
   ws.on('message', function incoming(message) {
-    child.stdin.write(message + "\n");
+    if (message === "SIGINT"){
+      console.log("SIGINT rec");
+      child.kill('SIGUSR1');
+    }else{
+      child.stdin.write(message + "\n");
+    }
   });
 
 });

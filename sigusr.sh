@@ -1,0 +1,2 @@
+
+trap "kill $!" SIGUSR1
