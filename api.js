@@ -3,7 +3,9 @@ var fs = require('fs');
 var url = require('url');
 var crypto = require('crypto');
 var fork = require('child_process').spawn;
+var exec = require('child_process').exec;
 var pwd = process.cwd();
+var WebSocketServer = require('ws').Server;
 console.log(pwd, process);
 
 var timeline = {"name":"sethacked","posts":["I think about this then say, Too sporty for a business suit. What are you fags talking about?","Price asks.","He hands me the drink then sits down, crossing his legs.","Okay, okay, okay, Van Patten says.","This is my question. A two-parter… He pauses dramatically.","Now are rounded collars too dressy or too casual? Part two, which tie knot looks best with them?","A distracted Price, his voice still tense, answers quickly with an exact, clear enunciation that can be heard over the din in Harry’s.","It’s a very versatile look and it can go with both suits and sport coats. It should be starched for dressy occasions and a collar pin should be worn if it’s particularly formal.","He pauses, sighs; it looks as if he’s spotted somebody.","I turn around to see who it is."]};
@@ -97,6 +99,23 @@ function handleTty (req, res, ctx)
     command += body;
     console.log(command);
 
+    var options = {
+      timeout:2000,
+      killSignal:'SIGKILL'
+    };
+
+    var child = exec(command, options, function (error, stdout, stderr) {
+        if (error !== null) {
+          res.write("error code: " + error.code);
+          console.log('exec error: ' + error);
+        }else{
+          res.write(stdout);
+          res.write(stderr);
+        }
+        res.end();
+    });
+
+/*
     var child = fork("sh");
 
     child.on('error', function (err) {
@@ -115,10 +134,13 @@ function handleTty (req, res, ctx)
 
     child.stdin.write(command + "\n");
     child.stdin.end();
+    */
+
+
 
   });
 
-  //var child = fork();
+
 }
 
 function readFile (uri)
@@ -147,7 +169,7 @@ function staticFileServer (req, res)
 
 var routes = {
   "/api/timeline" : handleTimeline,
-  "/api/tty" : handleTty,
+  //"/api/tty" : handleTty,
 };
 
 var server = http.createServer(function(req, res){
@@ -165,6 +187,39 @@ var server = http.createServer(function(req, res){
 
 });
 
+var wss = new WebSocketServer({ server: server });
+
+wss.on('connection', function connection(ws) {
+
+  var child = fork("sh");
+  console.log("spawned process");
+
+  child.on('error', function (err) {
+    console.log(err);
+
+  });
+
+  child.stdout.on('data', function (data) {
+    ws.send(data.toString('utf8'));
+  });
+
+  child.stderr.on('data', function (data) {
+    ws.send(data.toString('utf8'));
+  });
+
+  child.on('close', function (err) {
+  });
+
+  ws.on('close', function close() {
+    child.stdin.end();
+    console.log("child closed");
+  });
+
+  ws.on('message', function incoming(message) {
+    child.stdin.write(message + "\n");
+  });
+
+});
 
 server.listen(616, function() {
 

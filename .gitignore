@@ -1,0 +1,14 @@
+*
+!*.*
+!*/
+!makefile
+
+/node_modules
+*.exe
+*.db
+static/*.js
+/secret
+*.log
+*.swp
+*.swo
+*~

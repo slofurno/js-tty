@@ -81,18 +81,17 @@ function enterCommand (e)
     }else{
       pwd.push(args[1]);
     }
-
     directoryEl.innerHTML = pwd.join("/") + "> ";
-
-    return;
+    //return;
   }
-
+  /*
   var dir = pwd.join("/");
-
   var req = {pwd:dir, body:line};
 
   httpClient.request("POST", "/api/tty", JSON.stringify(req))
     .then(res => appendHistory(res));
+    */
+  ws.send(line);
 }
 
 function upHistory ()
@@ -127,6 +126,14 @@ tty.onkeydown = function(e){
     handler(e);
     return;
   }
+};
+
+
+var ws = new WebSocket("ws://" + location.host + "/ws");
+
+ws.onmessage = function(e){
+  console.log(e.data);
+  appendHistory(e.data);
 };
 
 httpClient.request("GET", "/api/timeline").then(function(rep){

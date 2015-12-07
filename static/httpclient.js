@@ -1,16 +1,11 @@
 var httpClient = (function(){
 "use strict";
-
   var request = function(method, uri, body){
 
     body = body || "";
 
     return new Promise(function(resolve,reject){
       var client = new XMLHttpRequest();
-
-      client.onreadystatechange = function (e){
-        console.log(this.response);
-      };
 
       client.onload=function(e){
         if (this.status==200){
