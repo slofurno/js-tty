@@ -1,0 +1,23 @@
+{
+  "name": "jstty",
+  "version": "0.1.0",
+  "description": "tevs",
+  "main": "api.js",
+  "dependencies": {
+    "ws": "^0.8.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slofurno/js-tty.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/slofurno/js-tty/issues"
+  },
+  "homepage": "https://github.com/slofurno/js-tty#readme"
+}
