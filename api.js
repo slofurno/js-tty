@@ -193,13 +193,16 @@ wss.on('connection', function connection(ws) {
 
   var child = fork("sh");
 
-  child.stdin.write("source ./sigusr.sh\n");
-  console.log("spawned process");
-
   child.on('error', function (err) {
     console.log(err);
-
   });
+
+  child.on('close', function (code, signal) {
+    console.log("tty closed", code, signal);
+  });
+
+  child.stdin.write("source ./sigusr.sh\n");
+  console.log("spawned process");
 
   child.stdout.on('data', function (data) {
     ws.send(data.toString('utf8'));
@@ -207,10 +210,6 @@ wss.on('connection', function connection(ws) {
 
   child.stderr.on('data', function (data) {
     ws.send(data.toString('utf8'));
-  });
-
-  child.on('close', function (code, signal) {
-    console.log("tty closed", code, signal);
   });
 
   ws.on('close', function close() {
