@@ -201,6 +201,14 @@ wss.on('connection', function connection(ws) {
     console.log("tty closed", code, signal);
   });
 
+  child.stdin.on('error', function (err) {
+    ws.send("error talking to shell");
+    ws.close();
+    console.log(err);
+  });
+
+  child.stdin.write("exec su - node-user\n");
+
   child.stdout.on('data', function (data) {
     ws.send(data.toString('utf8'));
   });
@@ -215,11 +223,12 @@ wss.on('connection', function connection(ws) {
   });
 
   ws.on('message', function incoming(message) {
+      console.log(message);
       child.stdin.write(message + "\n");
   });
 
 });
 
-server.listen(616, function() {
+server.listen(80, function() {
 
 });
